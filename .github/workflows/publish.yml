@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: '22'
           registry-url: 'https://npm.pkg.github.com'
-          scope: '@test-company'
+          scope: '@vishnuprasadvv'
       
       - name: Install dependencies
         run: npm ci
