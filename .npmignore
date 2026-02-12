@@ -1,0 +1,21 @@
+# Source files
+src/
+.storybook/
+
+# Config files
+*.config.ts
+*.config.js
+tsconfig.json
+vite.config.ts
+
+# Development
+**/*.stories.tsx
+*.log
+
+# Git
+.git/
+.github/
+.gitignore
+
+# Other
+node_modules/
