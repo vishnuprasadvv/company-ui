@@ -10,8 +10,9 @@ jobs:
     name: Publish to GitHub Packages
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write # Required to create a Release
+      packages: write # Required to publish the npm package
+      id-token: write
     
     steps:
       - name: Checkout code
@@ -36,12 +37,12 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Create GitHub Release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           body: |
             ## Changes in this release
             See [CHANGELOG.md](https://github.com/vishnuprasadvv/company-ui/blob/main/CHANGELOG.md) for details.
