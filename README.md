@@ -2,9 +2,10 @@
 
 > Production-ready design system for Test Company - Built with React, TypeScript, Tailwind CSS v4, and Radix UI.
 
-[![npm version](https://img.shields.io/npm/v/@test-company/ui.svg)](https://www.npmjs.com/package/@test-company/ui)
+[![npm version](https://img.shields.io/npm/v/@test-company/ui.svg)](https://github.com/vishnuprasadvv/company-ui/pkgs/npm/ui)
 [![License](https://img.shields.io/badge/license-UNLICENSED-blue.svg)](LICENSE)
-[![Storybook](https://img.shields.io/badge/storybook-view-ff4785)](https://test-company.github.io/ui)
+[![Storybook](https://img.shields.io/badge/storybook-view-ff4785)](https://vishnuprasadvv.github.io/company-ui/)
+[![GitHub](https://img.shields.io/badge/github-repo-black)](https://github.com/vishnuprasadvv/company-ui)
 
 ---
 
