@@ -1,6 +1,6 @@
 {
   "name": "@vishnuprasadvv/ui",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "private": false,
   "description": "Test Xaults Design System - React component library",
   "author": "Test Xaults",
@@ -20,7 +20,11 @@
         "default": "./dist/index.cjs"
       }
     },
-    "./styles": "./dist/index.css",
+     "./styles": {
+      "import": "./dist/index.css",
+      "require": "./dist/index.css",
+      "types": "./dist/styles.d.ts"
+    },
     "./theme": {
       "import": {
         "types": "./dist/theme/index.d.ts",
@@ -32,6 +36,11 @@
       }
     },
     "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "styles": ["./dist/styles.d.ts"]
+    }
   },
   "files": [
     "dist",
