@@ -26,10 +26,25 @@ pnpm add @test-company/ui
 
 ### 1. Install the Package
 ```bash
-npm install @test-company/ui react react-dom tailwindcss
+npm install @test-company/ui react react-dom
+npm install -D tailwindcss @tailwindcss/vite
 ```
 
 ### 2. Configure Tailwind CSS
+
+Edit `vite.config.ts`:
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
+})
+```
 
 Create or update `tailwind.config.ts`:
 ```typescript

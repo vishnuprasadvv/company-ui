@@ -1,6 +1,6 @@
 {
   "name": "@vishnuprasadvv/ui",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "private": false,
   "description": "Test Xaults Design System - React component library",
   "author": "Test Xaults",
@@ -71,9 +71,10 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "npm run clean && npm run build:lib",
+    "build": "npm run clean && npm run build:lib && npm run copy:types",
     "build:lib": "tsc -b && vite build --mode lib",
     "clean": "rm -rf dist",
+    "copy:types": "cp src/styles.d.ts dist/styles.d.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,css,md}\"",
