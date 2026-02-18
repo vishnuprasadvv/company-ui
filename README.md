@@ -1,39 +1,49 @@
-# @test-company/ui
+# @vishnuprasadvv/ui
 
-> Production-ready design system for Test Company - Built with React, TypeScript, Tailwind CSS v4, and Radix UI.
+> Production-ready React design system — built with TypeScript, Tailwind CSS v4, and Radix UI.
 
-[![npm version](https://img.shields.io/npm/v/@test-company/ui.svg)](https://github.com/vishnuprasadvv/company-ui/pkgs/npm/ui)
-[![License](https://img.shields.io/badge/license-UNLICENSED-blue.svg)](LICENSE)
-[![Storybook](https://img.shields.io/badge/storybook-view-ff4785)](https://vishnuprasadvv.github.io/company-ui/)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/vishnuprasadvv/company-ui/pkgs/npm/ui)
+[![License](https://img.shields.io/badge/license-UNLICENSED-red.svg)](LICENSE)
+[![Storybook](https://img.shields.io/badge/storybook-live-ff4785)](https://vishnuprasadvv.github.io/company-ui/)
 [![GitHub](https://img.shields.io/badge/github-repo-black)](https://github.com/vishnuprasadvv/company-ui)
 
 ---
 
-## 📦 Installation
-```bash
-npm install @test-company/ui
-# or
-yarn add @test-company/ui
-# or
-pnpm add @test-company/ui
-```
+## Table of Contents
 
-**Note:** This package requires authentication to GitHub Packages. See [Authentication](#authentication) below.
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Theming](#theming)
+- [Components](#components)
+- [Authentication](#authentication)
+- [TypeScript](#typescript)
+- [Development](#development)
 
 ---
 
-## 🚀 Quick Start
+## Installation
 
-### 1. Install the Package
+> **This package is hosted on GitHub Packages.** Authentication is required before installing. See [Authentication](#authentication) below first if this is your first time.
+
 ```bash
-npm install @test-company/ui react react-dom
+npm install @vishnuprasadvv/ui
+```
+
+**Peer dependencies** — install these if not already in your project:
+
+```bash
+npm install react react-dom
 npm install -D tailwindcss @tailwindcss/vite
 ```
 
-### 2. Configure Tailwind CSS
+---
 
-Edit `vite.config.ts`:
+## Quick Start
+
+### Step 1 — Configure Vite
+
 ```typescript
+// vite.config.ts
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -46,34 +56,23 @@ export default defineConfig({
 })
 ```
 
-Create or update `tailwind.config.ts`:
-```typescript
-import type { Config } from 'tailwindcss'
+### Step 2 — Add Tailwind to CSS
 
-export default {
-  content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
-    // 👇 Important: Scan the design system package
-    './node_modules/@test-company/ui/dist/**/*.{js,mjs}',
-  ],
-  darkMode: ['class'],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-} satisfies Config
+```css
+/* src/index.css */
+@import "tailwindcss";
 ```
 
-### 3. Set Up Your App
+### Step 3 — Wrap App with ThemeProvider
+
 ```tsx
-// main.tsx
+// src/main.tsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ThemeProvider } from '@test-company/ui'
-import '@test-company/ui/styles'
-import App from './App'
+import { ThemeProvider } from '@vishnuprasadvv/ui'
+import '@vishnuprasadvv/ui/styles'
 import './index.css'
+import App from './App'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -84,20 +83,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 )
 ```
 
-### 4. Use Components
+### Step 4 — Use Components
+
 ```tsx
-// App.tsx
-import { Button, Input } from '@test-company/ui'
+// src/App.tsx
+import { Button, Input } from '@vishnuprasadvv/ui'
 
 function App() {
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">Hello Test Company UI</h1>
-      
-      <div className="space-y-4">
-        <Button variant="default">Click me</Button>
-        <Input label="Email" placeholder="Enter your email" />
-      </div>
+    <div className="p-8 space-y-4">
+      <Button variant="default">Click me</Button>
+      <Input label="Email" placeholder="Enter your email" />
     </div>
   )
 }
@@ -107,83 +103,98 @@ export default App
 
 ---
 
-## 🎨 Theming
+## Theming
 
-### Using Default Theme
+The design system uses a fully dynamic theme engine. Colors, typography, and spacing are all controlled through a single `ThemeConfig` object injected at runtime via CSS variables — no build step required.
 
-The design system comes with a default light/dark theme:
+### Default Theme
+
 ```tsx
-import { ThemeProvider } from '@test-company/ui'
+import { ThemeProvider } from '@vishnuprasadvv/ui'
 
-function App() {
-  return (
-    <ThemeProvider>
-      {/* Your app */}
-    </ThemeProvider>
-  )
-}
+<ThemeProvider>
+  <App />
+</ThemeProvider>
 ```
 
 ### Custom Theme
 
-Create a custom theme configuration:
 ```typescript
-// theme.config.ts
-import { type ThemeConfig } from '@test-company/ui'
+// src/theme.config.ts
+import { type ThemeConfig } from '@vishnuprasadvv/ui'
 
 export const customTheme: ThemeConfig = {
   mode: 'light',
   colors: {
-    primary: '0 100% 50%', // Custom red
-    primaryForeground: '0 0% 100%',
+    primary: '234 58.8% 44.7%',          // HSL format
+    primaryForeground: '210 40% 98%',
     background: '0 0% 100%',
     foreground: '222.2 84% 4.9%',
-    // ... other colors
+    card: '0 0% 100%',
+    cardForeground: '222.2 84% 4.9%',
+    popover: '0 0% 100%',
+    popoverForeground: '222.2 84% 4.9%',
+    secondary: '210 40% 96.1%',
+    secondaryForeground: '222.2 47.4% 11.2%',
+    muted: '210 40% 96.1%',
+    mutedForeground: '215.4 16.3% 46.9%',
+    accent: '210 40% 96.1%',
+    accentForeground: '222.2 47.4% 11.2%',
+    destructive: '0 84.2% 60.2%',
+    destructiveForeground: '210 40% 98%',
+    success: '142.1 76.2% 36.3%',
+    successForeground: '355.7 100% 97.3%',
+    warning: '38 92.2% 50%',
+    warningForeground: '48 96% 8.9%',
+    border: '214.3 31.8% 91.4%',
+    input: '214.3 31.8% 91.4%',
+    ring: '222.2 84% 4.9%',
   },
   typography: {
     fontFamily: {
-      sans: 'Your Custom Font, system-ui, sans-serif',
+      sans: 'Inter, system-ui, sans-serif',
       serif: 'Georgia, serif',
-      mono: 'Monaco, monospace',
+      mono: '"Fira Code", monospace',
     },
-    // ... other typography
+    fontSize: {
+      xs: '0.75rem', sm: '0.875rem', base: '1rem',
+      lg: '1.125rem', xl: '1.25rem', '2xl': '1.5rem',
+      '3xl': '1.875rem', '4xl': '2.25rem',
+    },
+    fontWeight: { normal: 400, medium: 500, semibold: 600, bold: 700 },
+    lineHeight: { tight: '1.25', normal: '1.5', relaxed: '1.75' },
   },
   spacing: {
     radius: {
-      none: '0',
-      sm: '0.25rem',
-      md: '0.5rem',
-      lg: '1rem',
-      full: '9999px',
+      none: '0', xs: '0.125rem', sm: '0.25rem',
+      md: '0.5rem', lg: '0.75rem', xl: '1rem', full: '9999px',
     },
-    // ... other spacing
+    spacing: {
+      xs: '0.5rem', sm: '1rem', md: '1.5rem',
+      lg: '2rem', xl: '3rem', '2xl': '4rem',
+    },
   },
 }
 ```
 
-Use it in your app:
 ```tsx
-import { ThemeProvider } from '@test-company/ui'
+// src/main.tsx
+import { ThemeProvider } from '@vishnuprasadvv/ui'
 import { customTheme } from './theme.config'
 
-function App() {
-  return (
-    <ThemeProvider initialTheme={customTheme}>
-      {/* Your app */}
-    </ThemeProvider>
-  )
-}
+<ThemeProvider initialTheme={customTheme}>
+  <App />
+</ThemeProvider>
 ```
 
 ### Dark Mode
 
-Toggle between light and dark mode:
 ```tsx
-import { useTheme } from '@test-company/ui'
+import { useTheme } from '@vishnuprasadvv/ui'
 
 function ThemeToggle() {
   const { theme, toggleMode } = useTheme()
-  
+
   return (
     <button onClick={toggleMode}>
       Switch to {theme.mode === 'light' ? 'Dark' : 'Light'} Mode
@@ -192,180 +203,214 @@ function ThemeToggle() {
 }
 ```
 
-### API-Driven Themes
+### API-Driven Theme
 
-Load theme from your backend:
+Load your theme at runtime from a backend:
+
 ```tsx
-<ThemeProvider apiUrl="https://api.example.com/theme">
+<ThemeProvider apiUrl="https://api.yourcompany.com/theme">
   <App />
 </ThemeProvider>
 ```
 
+The API should return:
+
+```json
+{
+  "theme": {
+    "mode": "light",
+    "colors": { "primary": "234 58.8% 44.7%", "..." : "..." },
+    "typography": { "..." : "..." },
+    "spacing": { "..." : "..." }
+  }
+}
+```
+
+### Update Theme at Runtime
+
+```tsx
+import { useTheme } from '@vishnuprasadvv/ui'
+
+function BrandSwitcher() {
+  const { setTheme, theme } = useTheme()
+
+  const switchToBrand = () => {
+    setTheme({
+      colors: {
+        ...theme.colors,
+        primary: '0 100% 50%', // Red brand
+      },
+    })
+  }
+
+  return <button onClick={switchToBrand}>Switch Brand</button>
+}
+```
+
 ---
 
-## 📚 Components
-
-### Form Controls
-- **Button** - Versatile button with multiple variants
-- **Input** - Text input with label, error, and helper text
-- **Checkbox** - Accessible checkbox component
-- **Radio** - Radio button groups
-- **Select** - Dropdown select component
-- **Switch** - Toggle switch
-- **Textarea** - Multi-line text input
-
-### Data Display
-- **Table** - Feature-rich data table
-- **Card** - Container component
-- **Badge** - Status badges
-- **Avatar** - User avatars
-- **Tooltip** - Contextual tooltips
-
-### Feedback
-- **Alert** - Alert messages
-- **Toast** - Toast notifications (using Sonner)
-- **Dialog** - Modal dialogs
-- **Progress** - Progress indicators
-
-### Layout
-- **Tabs** - Tab navigation
-- **Separator** - Visual divider
-
-[**View all components in Storybook →**](https://test-company.github.io/ui)
-
----
-
-## 🔧 Component API
+## Components
 
 ### Button
-```tsx
-import { Button } from '@test-company/ui'
 
-<Button
-  variant="default" // default | secondary | destructive | outline | ghost
-  size="md"         // sm | md | lg
-  disabled={false}
-  onClick={() => {}}
->
+```tsx
+import { Button } from '@vishnuprasadvv/ui'
+
+<Button variant="default" size="md" disabled={false}>
   Click me
 </Button>
 ```
 
-**Variants:**
-- `default` - Primary action (blue background)
-- `secondary` - Secondary action (gray background)
-- `destructive` - Dangerous action (red background)
-- `outline` - Outlined button
-- `ghost` - Transparent button
+| Prop | Type | Default | Options |
+|------|------|---------|---------|
+| `variant` | string | `default` | `default` `secondary` `destructive` `outline` `ghost` |
+| `size` | string | `md` | `sm` `md` `lg` |
+| `disabled` | boolean | `false` | — |
 
 ### Input
+
 ```tsx
-import { Input } from '@test-company/ui'
+import { Input } from '@vishnuprasadvv/ui'
 
 <Input
   label="Email"
   type="email"
   placeholder="Enter your email"
+  helperText="We will never share your email"
   error="Email is required"
-  helperText="We'll never share your email"
   disabled={false}
 />
 ```
 
+| Prop | Type | Description |
+|------|------|-------------|
+| `label` | string | Label displayed above the input |
+| `error` | string | Error message (turns border red) |
+| `helperText` | string | Subtle help text below the input |
+
 ### Table
+
 ```tsx
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from '@test-company/ui'
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@vishnuprasadvv/ui'
 
 <Table size="md" striped hoverable>
   <TableHeader>
     <TableRow>
       <TableHead>Name</TableHead>
       <TableHead>Email</TableHead>
+      <TableHead>Status</TableHead>
     </TableRow>
   </TableHeader>
   <TableBody>
     <TableRow>
       <TableCell>John Doe</TableCell>
       <TableCell>john@example.com</TableCell>
+      <TableCell>Active</TableCell>
     </TableRow>
   </TableBody>
 </Table>
 ```
 
+### Full Component List
+
+| Category | Components |
+|----------|------------|
+| **Form** | Button, Input, Checkbox, Radio, Select, Switch, Textarea, Combobox |
+| **Display** | Table, Card, Badge, Avatar, Tooltip |
+| **Feedback** | Alert, Toast, Dialog, Progress |
+| **Layout** | Tabs, Separator |
+
+[**View all components in Storybook →**](https://vishnuprasadvv.github.io/company-ui/)
+
 ---
 
-## 🔐 Authentication
+## Authentication
 
-This package is published to **GitHub Packages** and requires authentication.
+This package is hosted on **GitHub Packages** (private). You need to authenticate once per machine.
 
-### One-Time Setup
+### Step 1 — Create a GitHub Personal Access Token
 
-1. **Create GitHub Personal Access Token**
-   - Go to https://github.com/settings/tokens
-   - Click "Generate new token (classic)"
-   - Select scopes: `read:packages`, `write:packages`
-   - Generate and copy the token
+1. Go to [https://github.com/settings/tokens](https://github.com/settings/tokens)
+2. Click **"Generate new token (classic)"**
+3. Name it: `npm-packages-read`
+4. Select scopes: ✅ `read:packages` ✅ `repo`
+5. Click **"Generate token"** and copy it immediately
 
-2. **Login to npm**
+### Step 2 — Login to the GitHub Package Registry
+
 ```bash
-npm login --scope=@test-company --registry=https://npm.pkg.github.com
+npm login --scope=@vishnuprasadvv --registry=https://npm.pkg.github.com
 
-# Enter:
+# When prompted:
 # Username: your-github-username
-# Password: <paste-your-token>
-# Email: your-email@company.com
+# Password: ghp_xxxxxxxxxxxxxxxxxxxx   (paste your token)
+# Email:    your-email@company.com
 ```
 
-3. **Create `.npmrc` in your project**
+### Step 3 — Add `.npmrc` to Your Project
+
+Create a `.npmrc` file in your project root:
+
 ```
-@test-company:registry=https://npm.pkg.github.com
+@vishnuprasadvv:registry=https://npm.pkg.github.com
 ```
 
-Now you can install the package normally:
+> **Important:** Add `.npmrc` to `.gitignore` if it contains your token. If it only contains the registry line (no token), it is safe to commit.
+
+### Step 4 — Install
+
 ```bash
-npm install @test-company/ui
+npm install @vishnuprasadvv/ui
 ```
 
 ---
 
-## 📖 Documentation
+## TypeScript
 
-- **Storybook:** [https://test-company.github.io/ui](https://test-company.github.io/ui)
-- **GitHub:** [https://github.com/test-company/ui](https://github.com/test-company/ui)
-- **Issues:** [https://github.com/test-company/ui/issues](https://github.com/test-company/ui/issues)
+The package ships with full TypeScript types. If you get a type error on the styles import:
+
+```ts
+// Cannot find module '@vishnuprasadvv/ui/styles'
+import '@vishnuprasadvv/ui/styles'
+```
+
+Create `src/types/modules.d.ts` in your project:
+
+```typescript
+declare module '@vishnuprasadvv/ui/styles' {}
+```
+
+Then restart your TypeScript server: `Ctrl+Shift+P` → `TypeScript: Restart TS Server`
 
 ---
 
-## 🛠️ Development
+## Development
 
 ### Setup
+
 ```bash
-git clone https://github.com/test-company/ui.git
-cd ui
+git clone https://github.com/vishnuprasadvv/company-ui.git
+cd company-ui
 npm install
 ```
 
 ### Commands
+
 ```bash
-npm run dev              # Start Vite dev server
-npm run storybook        # Start Storybook
-npm run build            # Build library for production
-npm run lint             # Lint code
-npm run format           # Format code with Prettier
-npm run type-check       # Check TypeScript types
+npm run dev              # Start Vite dev server (port 5173)
+npm run storybook        # Start Storybook (port 6006)
+npm run build            # Build library for distribution
+npm run type-check       # TypeScript check
+npm run lint             # ESLint check
+npm run lint:fix         # ESLint auto-fix
+npm run format           # Prettier format
 npm test                 # Run tests
 ```
 
 ### Project Structure
+
 ```
-ui/
+company-ui/
 ├── src/
 │   ├── components/ui/           # Shadcn base components
 │   ├── design-system/
@@ -374,41 +419,37 @@ ui/
 │   │   │   │   ├── Button.tsx
 │   │   │   │   ├── Button.stories.tsx
 │   │   │   │   └── index.ts
-│   │   │   └── ...
-│   │   └── theme/               # Theme system
-│   ├── lib/                     # Utilities
-│   ├── types/                   # TypeScript types
-│   └── index.ts                 # Main export
-├── .storybook/                  # Storybook config
-└── dist/                        # Build output
+│   │   │   ├── Input/
+│   │   │   ├── Table/
+│   │   │   └── index.ts         # Re-exports all components
+│   │   └── theme/
+│   │       ├── theme.ts         # Default theme values
+│   │       ├── ThemeProvider.tsx
+│   │       └── index.ts
+│   ├── lib/utils.ts             # cn() utility
+│   ├── types/theme.ts           # ThemeConfig interface
+│   ├── utils/themeUtils.ts      # applyTheme, mergeThemes, etc.
+│   └── index.ts                 # Main package entry
+├── .storybook/
+├── dist/                        # Generated — do not edit
+├── vite.config.ts
+├── vitest.config.ts
+└── package.json
 ```
 
 ---
 
-## 🤝 Contributing
+## Links
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md)
-
----
-
-## 📝 Changelog
-
-See [CHANGELOG.md](./CHANGELOG.md)
-
----
-
-## 📄 License
-
-UNLICENSED - Internal use only for Test Company
+- **Storybook:** https://vishnuprasadvv.github.io/company-ui/
+- **GitHub:** https://github.com/vishnuprasadvv/company-ui
+- **Packages:** https://github.com/vishnuprasadvv/company-ui/pkgs/npm/ui
+- **Issues:** https://github.com/vishnuprasadvv/company-ui/issues
+- **Changelog:** [CHANGELOG.md](./CHANGELOG.md)
+- **Contributing:** [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ---
 
-## 💬 Support
+## License
 
-For questions or issues:
-- Open an issue: https://github.com/test-company/ui/issues
-- Contact: engineering@testcompany.com
-
----
-
-**Made with ❤️ by Test Xaults Engineering Team**
+UNLICENSED — Internal use only.

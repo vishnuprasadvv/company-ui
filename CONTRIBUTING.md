@@ -1,92 +1,115 @@
-# Contributing to @test-company/ui
+# Contributing to @vishnuprasadvv/ui
 
-Thank you for your interest in contributing! This document provides guidelines for contributing to the design system.
-
-## 📋 Table of Contents
-
-- [Getting Started](#getting-started)
-- [Development Workflow](#development-workflow)
-- [Component Guidelines](#component-guidelines)
-- [Code Standards](#code-standards)
-- [Submitting Changes](#submitting-changes)
+Thank you for contributing to the design system. This guide covers everything you need to go from zero to a merged pull request.
 
 ---
 
-## Getting Started
+## Table of Contents
 
-### Prerequisites
+- [Prerequisites](#prerequisites)
+- [Local Setup](#local-setup)
+- [Project Structure](#project-structure)
+- [Creating a Component](#creating-a-component)
+- [Updating the Theme](#updating-the-theme)
+- [Code Standards](#code-standards)
+- [Commit Convention](#commit-convention)
+- [Pull Request Process](#pull-request-process)
+- [Publishing a New Version](#publishing-a-new-version)
+
+---
+
+## Prerequisites
 
 - Node.js >= 18.0.0
 - npm >= 9.0.0
 - Git
+- A GitHub account with access to the `vishnuprasadvv` organization
 
-### Setup
+---
 
-1. **Clone the repository**
+## Local Setup
+
 ```bash
-git clone https://github.com/test-company/ui.git
-cd ui
-```
+# Clone
+git clone https://github.com/vishnuprasadvv/company-ui.git
+cd company-ui
 
-2. **Install dependencies**
-```bash
+# Install dependencies
 npm install
-```
 
-3. **Start development**
-```bash
-npm run dev        # Start Vite
-npm run storybook  # Start Storybook
+# Start Storybook (recommended for component development)
+npm run storybook
+# Opens http://localhost:6006
+
+# Or start the Vite dev app
+npm run dev
+# Opens http://localhost:5173
 ```
 
 ---
 
-## Development Workflow
+## Project Structure
 
-### Creating a New Component
+```
+src/
+├── components/ui/             # Raw Shadcn/Radix base components (do not edit)
+├── design-system/
+│   ├── components/            # All custom components live here
+│   │   ├── Button/
+│   │   │   ├── Button.tsx         # Component
+│   │   │   ├── Button.stories.tsx # Storybook stories
+│   │   │   └── index.ts           # Re-exports
+│   │   ├── Input/
+│   │   ├── Table/
+│   │   └── index.ts           # Re-exports all components
+│   └── theme/
+│       ├── theme.ts           # defaultTheme values
+│       ├── ThemeProvider.tsx  # Context + useTheme hook
+│       └── index.ts
+├── lib/
+│   └── utils.ts               # cn() utility (clsx + twMerge)
+├── types/
+│   └── theme.ts               # ThemeConfig, ThemeColors, etc.
+├── utils/
+│   └── themeUtils.ts          # applyTheme, mergeThemes, validateTheme
+└── index.ts                   # Main package entry — exports everything
+```
 
-1. **Create component folder**
+The rule is simple: **one folder per component**, each with a `.tsx`, a `.stories.tsx`, and an `index.ts`.
+
+---
+
+## Creating a Component
+
+### 1. Create the folder
+
 ```bash
-mkdir src/design-system/components/NewComponent
+mkdir src/design-system/components/Badge
 ```
 
-2. **Create component files**
-```
-NewComponent/
-├── NewComponent.tsx       # Component implementation
-├── NewComponent.stories.tsx  # Storybook stories
-├── NewComponent.test.tsx  # Tests (optional)
-└── index.ts               # Exports
-```
+### 2. Write the component
 
-3. **Component template**
-```typescript
-// NewComponent.tsx
+```tsx
+// src/design-system/components/Badge/Badge.tsx
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 
-export interface NewComponentProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'alternative'
-  size?: 'sm' | 'md' | 'lg'
+export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  variant?: 'default' | 'success' | 'warning' | 'destructive'
 }
 
-export const NewComponent = React.forwardRef<HTMLDivElement, NewComponentProps>(
-  ({ className, variant = 'default', size = 'md', ...props }, ref) => {
+export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
+  ({ className, variant = 'default', ...props }, ref) => {
     return (
-      <div
+      <span
         ref={ref}
         className={cn(
-          'base-styles',
-          // Variant styles
+          'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
           {
-            'variant-default': variant === 'default',
-            'variant-alternative': variant === 'alternative',
-          },
-          // Size styles
-          {
-            'size-sm': size === 'sm',
-            'size-md': size === 'md',
-            'size-lg': size === 'lg',
+            'bg-primary text-primary-foreground': variant === 'default',
+            'bg-success text-success-foreground': variant === 'success',
+            'bg-warning text-warning-foreground': variant === 'warning',
+            'bg-destructive text-destructive-foreground': variant === 'destructive',
           },
           className
         )}
@@ -96,280 +119,309 @@ export const NewComponent = React.forwardRef<HTMLDivElement, NewComponentProps>(
   }
 )
 
-NewComponent.displayName = 'NewComponent'
+Badge.displayName = 'Badge'
 ```
 
-4. **Create Storybook stories**
-```typescript
-// NewComponent.stories.tsx
+### 3. Write Storybook stories
+
+```tsx
+// src/design-system/components/Badge/Badge.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react'
-import { NewComponent } from './NewComponent'
+import { Badge } from './Badge'
 
 const meta = {
-  title: 'Design System/NewComponent',
-  component: NewComponent,
-  parameters: {
-    layout: 'centered',
-  },
+  title: 'Design System/Badge',
+  component: Badge,
+  parameters: { layout: 'centered' },
   tags: ['autodocs'],
   argTypes: {
     variant: {
       control: 'select',
-      options: ['default', 'alternative'],
-    },
-    size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
+      options: ['default', 'success', 'warning', 'destructive'],
     },
   },
-} satisfies Meta<typeof NewComponent>
+} satisfies Meta<typeof Badge>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {
-  args: {
-    children: 'New Component',
-  },
-}
-
-export const Alternative: Story = {
-  args: {
-    variant: 'alternative',
-    children: 'Alternative Variant',
-  },
-}
+export const Default: Story = { args: { children: 'Default' } }
+export const Success: Story = { args: { variant: 'success', children: 'Active' } }
+export const Warning: Story = { args: { variant: 'warning', children: 'Pending' } }
+export const Destructive: Story = { args: { variant: 'destructive', children: 'Removed' } }
 ```
 
-5. **Export component**
+### 4. Create the index
+
 ```typescript
-// index.ts
-export * from './NewComponent'
+// src/design-system/components/Badge/index.ts
+export * from './Badge'
 ```
+
+### 5. Register in the barrel
+
 ```typescript
 // src/design-system/components/index.ts
 export * from './Button'
 export * from './Input'
-export * from './NewComponent'  // Add this
+export * from './Table'
+export * from './Badge'   // ← add this
+```
+
+### 6. Verify in Storybook
+
+```bash
+npm run storybook
+# Navigate to Design System/Badge and check all stories render correctly
 ```
 
 ---
 
-## Component Guidelines
+## Updating the Theme
 
-### Design Principles
+### Adding a new color token
 
-1. **Accessible by Default**
-   - Use semantic HTML
-   - Include ARIA attributes
-   - Support keyboard navigation
-   - Provide proper focus states
+1. Add it to the `ThemeColors` interface in `src/types/theme.ts`:
 
-2. **Composable**
-   - Build small, reusable components
-   - Allow composition for complex UIs
-   - Don't over-engineer
+```typescript
+export interface ThemeColors {
+  // ... existing tokens
+  info: string
+  infoForeground: string
+}
+```
 
-3. **Consistent API**
-   - Follow React conventions
-   - Use consistent prop names
-   - Extend native HTML attributes when possible
+2. Add the default value in `src/design-system/theme/theme.ts`:
 
-4. **Themeable**
-   - Use CSS variables for colors
-   - Support light/dark mode
-   - Allow customization via className
+```typescript
+export const defaultTheme: ThemeConfig = {
+  colors: {
+    // ... existing
+    info: '199 89% 48%',
+    infoForeground: '210 40% 98%',
+  },
+}
+```
 
-### Component Checklist
+3. Add the CSS variable mapping in `src/index.css`:
 
-- [ ] Uses TypeScript
-- [ ] Extends appropriate HTML element props
-- [ ] Implements `forwardRef` if needed
-- [ ] Uses Tailwind CSS classes
-- [ ] Supports theme colors
-- [ ] Has Storybook stories
-- [ ] Includes JSDoc comments
-- [ ] Handles edge cases
-- [ ] Accessible (keyboard, screen readers)
-- [ ] Responsive design
+```css
+@layer base {
+  :root {
+    /* existing variables */
+    --info: 199 89% 48%;
+    --info-foreground: 210 40% 98%;
+  }
+}
+```
+
+4. `applyTheme()` in `themeUtils.ts` will automatically inject the new variable because it iterates over all keys in `theme.colors`.
 
 ---
 
 ## Code Standards
 
-### TypeScript
+### TypeScript — always type props explicitly
+
 ```typescript
 // ✅ Good
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'secondary'
-  size?: 'sm' | 'md' | 'lg'
+  variant?: 'default' | 'secondary' | 'destructive'
 }
 
 // ❌ Bad
 export interface ButtonProps {
   variant?: string
-  size?: string
   onClick?: any
 }
 ```
 
-### Naming Conventions
+### Tailwind — always use `cn()` for conditional classes
 
-- **Components:** PascalCase (`Button`, `InputField`)
-- **Props:** camelCase (`variant`, `isDisabled`)
-- **Files:** PascalCase for components (`Button.tsx`)
-- **Constants:** UPPER_SNAKE_CASE (`DEFAULT_SIZE`)
-
-### Tailwind Usage
 ```typescript
-// ✅ Good - Use cn() utility
+// ✅ Good
 className={cn(
   'base-classes',
-  variant === 'primary' && 'primary-classes',
+  variant === 'primary' && 'bg-primary text-primary-foreground',
   className
 )}
 
-// ❌ Bad - String concatenation
-className={`base-classes ${variant === 'primary' ? 'primary-classes' : ''} ${className}`}
+// ❌ Bad
+className={`base-classes ${variant === 'primary' ? 'bg-primary' : ''}`}
 ```
 
-### Comments
+### Colors — always use CSS variable classes, never hardcoded colors
+
+```tsx
+// ✅ Good — respects the theme
+<div className="bg-primary text-primary-foreground" />
+
+// ❌ Bad — ignores the theme
+<div className="bg-blue-600 text-white" />
+```
+
+### forwardRef — use it for all DOM-facing components
+
 ```typescript
-/**
- * Primary button component for user actions
- * 
- * @example
- * ```tsx
- * <Button variant="primary" onClick={handleClick}>
- *   Click me
- * </Button>
- * ```
- */
-export const Button = ...
+// ✅ Good
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, ...props }, ref) => <button ref={ref} {...props} />
+)
+Button.displayName = 'Button'
+```
+
+### Naming
+
+| Type | Convention | Example |
+|------|------------|---------|
+| Component | PascalCase | `BadgeGroup` |
+| Props interface | PascalCase + Props | `BadgeGroupProps` |
+| File | PascalCase | `BadgeGroup.tsx` |
+| Hook | camelCase + use | `useTheme` |
+| Utility | camelCase | `applyTheme` |
+| Constant | UPPER_SNAKE_CASE | `DEFAULT_THEME` |
+
+---
+
+## Commit Convention
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/).
+
+```
+<type>(<scope>): <short description>
+
+[optional body]
+[optional footer]
+```
+
+| Type | When to use |
+|------|-------------|
+| `feat` | New component or feature |
+| `fix` | Bug fix |
+| `docs` | README, CHANGELOG, comments only |
+| `style` | Formatting, no logic change |
+| `refactor` | Code change that is not a fix or feature |
+| `test` | Adding or updating tests |
+| `chore` | Build config, dependencies, CI |
+
+**Examples:**
+
+```bash
+git commit -m "feat(Badge): add Badge component with 4 variants"
+git commit -m "fix(Button): correct focus ring not showing on outline variant"
+git commit -m "docs: update authentication section in README"
+git commit -m "chore: upgrade storybook to v10.2"
 ```
 
 ---
 
-## Submitting Changes
+## Pull Request Process
 
-### Workflow
+### 1. Branch from `main`
 
-1. **Create a branch**
 ```bash
-git checkout -b feat/new-component
+git checkout main
+git pull origin main
+git checkout -b feat/badge-component
 ```
 
 Branch naming:
-- `feat/` - New features
-- `fix/` - Bug fixes
-- `docs/` - Documentation
-- `refactor/` - Code refactoring
-- `test/` - Tests
+- `feat/badge-component` — new feature
+- `fix/button-focus-ring` — bug fix
+- `docs/update-readme` — documentation
+- `refactor/theme-provider` — refactoring
 
-2. **Make changes**
+### 2. Make and verify your changes
+
 ```bash
-# Make your changes
-npm run lint        # Check linting
-npm run type-check  # Check types
-npm run format      # Format code
+npm run type-check   # No TypeScript errors
+npm run lint         # No ESLint errors
+npm run format       # Prettier formatted
+npm run storybook    # Component looks correct in Storybook
+npm run build        # Library builds successfully
 ```
 
-3. **Commit changes**
+### 3. Commit and push
 
-Follow [Conventional Commits](https://www.conventionalcommits.org/):
 ```bash
-git commit -m "feat: add NewComponent"
-git commit -m "fix: button hover state"
-git commit -m "docs: update README"
+git add .
+git commit -m "feat(Badge): add Badge component"
+git push origin feat/badge-component
 ```
 
-4. **Push and create PR**
-```bash
-git push origin feat/new-component
-```
+### 4. Open a Pull Request
 
-Then create a Pull Request on GitHub.
+Go to https://github.com/vishnuprasadvv/company-ui and open a PR against `main`.
 
-### PR Guidelines
+Fill in the PR template:
 
-- **Title:** Use conventional commit format
-- **Description:** Explain what and why
-- **Screenshots:** For UI changes
-- **Testing:** Describe how you tested
-- **Breaking Changes:** Clearly mark them
-
-### PR Template
 ```markdown
-## Description
-Brief description of changes
+## What
+Brief description of the change.
 
-## Type of Change
-- [ ] New feature
+## Why
+Why is this change needed?
+
+## Type
+- [ ] New component
 - [ ] Bug fix
 - [ ] Documentation
 - [ ] Breaking change
 
-## Screenshots (if applicable)
-[Add screenshots]
-
 ## Checklist
-- [ ] Code follows style guidelines
-- [ ] Self-reviewed code
-- [ ] Added/updated documentation
-- [ ] Added/updated tests
-- [ ] Changes work in Storybook
+- [ ] Storybook stories added/updated
+- [ ] TypeScript types correct
+- [ ] No lint or type errors
+- [ ] CHANGELOG.md updated
 ```
+
+### 5. Review
+
+- At least one approval is required before merging
+- All CI checks must pass (lint, type-check, build)
+- Squash merge into `main`
 
 ---
 
-## Questions?
+## Publishing a New Version
 
-- Open a discussion: https://github.com/test-company/ui/discussions
-- Contact: engineering@testcompany.com
+Only maintainers publish. The process is fully automated via GitHub Actions.
+
+### Patch release (bug fix)
+
+```bash
+# Update version in package.json
+npm version patch   # e.g. 1.0.0 → 1.0.1
+
+# Push with tag
+git push origin main --follow-tags
+```
+
+### Minor release (new component or feature)
+
+```bash
+npm version minor   # e.g. 1.0.0 → 1.1.0
+git push origin main --follow-tags
+```
+
+### Major release (breaking change)
+
+```bash
+npm version major   # e.g. 1.0.0 → 2.0.0
+git push origin main --follow-tags
+```
+
+Pushing a tag (`v*.*.*`) triggers the GitHub Actions publish workflow which:
+
+1. Builds the library
+2. Publishes to GitHub Packages
+3. Creates a GitHub Release
+
+After publishing, update `CHANGELOG.md` to move items from `[Unreleased]` to the new version section.
 
 ---
 
-Thank you for contributing! 🎉
-```
+## Questions
 
----
-
-## **Step 2.6: Create LICENSE File**
-
-### **Create `LICENSE`**
-```
-UNLICENSED
-
-Copyright (c) 2024 Test Company
-
-This software and associated documentation files are proprietary and confidential.
-Unauthorized copying, distribution, modification, or use of this software,
-via any medium, is strictly prohibited without explicit written permission
-from Test Company.
-
-For licensing inquiries, contact: legal@testcompany.com
-```
-
-Or if you want to make it open source:
-```
-MIT License
-
-Copyright (c) 2024 Test Company
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+- **Bug or issue:** https://github.com/vishnuprasadvv/company-ui/issues
+- **Discussion:** https://github.com/vishnuprasadvv/company-ui/discussions

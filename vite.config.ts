@@ -37,7 +37,6 @@ export default defineConfig(({ mode }) => {
       build: {
         lib: {
           entry: resolve(__dirname, 'src/index.ts'),
-          // ✅ No 'name' field (deprecated in Vite 7)
           formats: ['es', 'cjs'],
           fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
         },
@@ -62,14 +61,14 @@ export default defineConfig(({ mode }) => {
               'react-dom': 'ReactDOM',
               'react/jsx-runtime': 'react/jsx-runtime',
             },
-            // ✅ Renames style.css → index.css
+            // Renames style.css → index.css
             assetFileNames: (assetInfo) => {
               if (assetInfo.name?.endsWith('.css')) return 'index.css'
               return assetInfo.name ?? '[name][extname]'
             },
           },
         },
-        // ✅ Critical: bundle all CSS into one file
+        // bundle all CSS into one file
         cssCodeSplit: false,
         sourcemap: true,
         outDir: 'dist',
